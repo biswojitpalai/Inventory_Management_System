@@ -1,0 +1,28 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6 mx-auto mt-5 px-4">
+      <h1 class="fw-light text-warning display-3" style="font-family: 'Dancing Script', cursive; text-align: center;">
+        Track & Manage Your Inventory
+      </h1>
+
+      <p class="fw-light text-warning text-center" style="font-family: 'Lobster', cursive; font-size: 1.25rem;">
+        <i><b>Stay ahead by effortlessly tracking your inventory and receiving alerts when stock runs low.</b></i>
+      </p>
+
+      <div class="text-center mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-lg btn-warning"
+          style="font-family: 'Pacifico', cursive; padding: 12px 30px; font-size: 1.1rem;">
+          Get Started Now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Lobster&family=Pacifico&display=swap"
+  rel="stylesheet">
+
+{% endblock %}
