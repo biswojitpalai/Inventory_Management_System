@@ -80,25 +80,101 @@ class SignUpView(View):
         
         return render(request,'inventory/signup.html',{'form':form})
     
-class AddItem(LoginRequiredMixin,CreateView):
-    model=InventoryItem
-    form_class=InventoryItemForm
-    template_name='inventory/item_form.html'
-    success_url=reverse_lazy('dashboard')
+# class AddItem(LoginRequiredMixin,CreateView):
+#     model=InventoryItem
+#     form_class=InventoryItemForm
+#     template_name='inventory/item_form.html'
+#     success_url=reverse_lazy('dashboard')
 
-    def get_context_data(self, **kwargs):
-        context= super().get_context_data(**kwargs)
-        context['categories']=Category.objects.all()
-        return context
-    def form_valid(self,form):
-        form.instance.user=self.request.user
-        return super().form_valid(form)
+#     def get_context_data(self, **kwargs):
+#         context= super().get_context_data(**kwargs)
+#         context['categories']=Category.objects.all()
+#         return context
+#     def form_valid(self,form):
+#         form.instance.user=self.request.user
+#         return super().form_valid(form)
     
-class EditItem(LoginRequiredMixin,UpdateView):
-    model=InventoryItem
-    form_class=InventoryItemForm
-    template_name='inventory/item_form.html'
-    success_url=reverse_lazy('dashboard')
+# class EditItem(LoginRequiredMixin,UpdateView):
+#     model=InventoryItem
+#     form_class=InventoryItemForm
+#     template_name='inventory/item_form.html'
+#     success_url=reverse_lazy('dashboard')
+
+class AddItem(LoginRequiredMixin, CreateView):
+    model = InventoryItem
+    form_class = InventoryItemForm
+    template_name = 'inventory/item_form.html'
+    success_url = reverse_lazy('dashboard')
+
+    def form_valid(self, form):
+        # Check if a new category is provided
+        new_category = form.cleaned_data.get('new_category')
+        if new_category:
+            category, created = Category.objects.get_or_create(name=new_category)
+            form.instance.category = category
+        else:
+            form.instance.category = form.cleaned_data.get('category')
+
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+def import_csv(request):
+    if request.method == "POST":
+        form = CSVImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+
+            try:
+                # Decode with fallback encodings
+                decoded_file = None
+                for encoding in ['utf-8', 'ISO-8859-1', 'windows-1252']:
+                    try:
+                        decoded_file = csv_file.read().decode(encoding).splitlines()
+                        break  # Exit loop if decoding is successful
+                    except UnicodeDecodeError:
+                        continue
+
+                if not decoded_file:
+                    raise ValueError("Unable to decode the file with supported encodings.")
+
+                # Process the CSV file
+                reader = csv.DictReader(decoded_file)
+                for row in reader:
+                    category, _ = Category.objects.get_or_create(name=row['Category'])
+                    Item.objects.create(
+                        name=row['Name'],
+                        quantity=int(row['Quantity']),
+                        category=category,
+                        price=float(row['Price'])
+                    )
+
+                messages.success(request, "CSV file imported successfully!")
+                return redirect('dashboard')
+
+            except Exception as e:
+                messages.error(request, f"Error processing file: {e}")
+    else:
+        form = CSVImportForm()
+
+    return render(request, 'inventory/import_csv.html', {'form': form})
+
+class EditItem(LoginRequiredMixin, UpdateView):
+    model = InventoryItem
+    form_class = InventoryItemForm
+    template_name = 'inventory/item_form.html'
+    success_url = reverse_lazy('dashboard')
+
+    def form_valid(self, form):
+        # Check if a new category is provided
+        new_category = form.cleaned_data.get('new_category')
+        if new_category:
+            category, created = Category.objects.get_or_create(name=new_category)
+            form.instance.category = category
+        else:
+            form.instance.category = form.cleaned_data.get('category')
+
+        return super().form_valid(form)
+
 
 class DeleteItem(LoginRequiredMixin,DeleteView):
     model=InventoryItem

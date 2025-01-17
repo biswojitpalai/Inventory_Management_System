@@ -13,11 +13,11 @@ class InventoryItem(models.Model):
     def __str__(self):
         return self.name
     
+
 class Category(models.Model):
     name=models.CharField(max_length=200)
     def __str__(self):
         return self.name
-
 
     def total_price(self):
         return self.item.price * self.quantity

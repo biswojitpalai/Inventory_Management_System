@@ -7,7 +7,23 @@
         <h1 class="text-warning">Inventory Item</h1>
         <form method="POST">
             {% csrf_token %}
-            {{form|crispy}}
+            <!-- Render specific fields manually -->
+            {{ form.name|as_crispy_field }}
+            {{ form.quantity|as_crispy_field }}
+            
+            <!-- Render category dropdown -->
+            <div class="form-group">
+                <label for="id_new_category">Category:</label>
+                {{ form.category|as_crispy_field }}
+            </div>
+            
+            <!-- Add new category input -->
+            <div class="form-group">
+                <label for="id_new_category">New Category (optional):</label>
+                <input type="text" id="id_new_category" name="new_category" class="form-control" placeholder="Enter new category">
+            </div>
+            
+            {{ form.price|as_crispy_field }}
             <div class="mt-3">
                 <button class="btn btn-primary">Add Item</button>
             </div>
