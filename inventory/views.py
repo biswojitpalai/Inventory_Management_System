@@ -80,25 +80,6 @@ class SignUpView(View):
         
         return render(request,'inventory/signup.html',{'form':form})
     
-# class AddItem(LoginRequiredMixin,CreateView):
-#     model=InventoryItem
-#     form_class=InventoryItemForm
-#     template_name='inventory/item_form.html'
-#     success_url=reverse_lazy('dashboard')
-
-#     def get_context_data(self, **kwargs):
-#         context= super().get_context_data(**kwargs)
-#         context['categories']=Category.objects.all()
-#         return context
-#     def form_valid(self,form):
-#         form.instance.user=self.request.user
-#         return super().form_valid(form)
-    
-# class EditItem(LoginRequiredMixin,UpdateView):
-#     model=InventoryItem
-#     form_class=InventoryItemForm
-#     template_name='inventory/item_form.html'
-#     success_url=reverse_lazy('dashboard')
 
 class AddItem(LoginRequiredMixin, CreateView):
     model = InventoryItem
