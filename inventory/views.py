@@ -118,45 +118,6 @@ class AddItem(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-def import_csv(request):
-    if request.method == "POST":
-        form = CSVImportForm(request.POST, request.FILES)
-        if form.is_valid():
-            csv_file = request.FILES['csv_file']
-
-            try:
-                # Decode with fallback encodings
-                decoded_file = None
-                for encoding in ['utf-8', 'ISO-8859-1', 'windows-1252']:
-                    try:
-                        decoded_file = csv_file.read().decode(encoding).splitlines()
-                        break  # Exit loop if decoding is successful
-                    except UnicodeDecodeError:
-                        continue
-
-                if not decoded_file:
-                    raise ValueError("Unable to decode the file with supported encodings.")
-
-                # Process the CSV file
-                reader = csv.DictReader(decoded_file)
-                for row in reader:
-                    category, _ = Category.objects.get_or_create(name=row['Category'])
-                    Item.objects.create(
-                        name=row['Name'],
-                        quantity=int(row['Quantity']),
-                        category=category,
-                        price=float(row['Price'])
-                    )
-
-                messages.success(request, "CSV file imported successfully!")
-                return redirect('dashboard')
-
-            except Exception as e:
-                messages.error(request, f"Error processing file: {e}")
-    else:
-        form = CSVImportForm()
-
-    return render(request, 'inventory/import_csv.html', {'form': form})
 
 class EditItem(LoginRequiredMixin, UpdateView):
     model = InventoryItem
@@ -222,6 +183,107 @@ class ExportInventoryView(LoginRequiredMixin, View):
             writer.writerow([item.name, item.quantity, item.category.name if item.category else "None", item.date_created])
 
         return response
+
+CART = {}
+
+def add_to_cart(request, item_id):
+    item = get_object_or_404(InventoryItem, id=item_id)
+    if item_id not in CART:
+        CART[item_id] = {'name': item.name, 'price': item.price, 'quantity': 1}
+    else:
+        CART[item_id]['quantity'] += 1
+    messages.success(request, f"Added {item.name} to the cart.")
+    return redirect('dashboard')
+
+def view_cart(request):
+    cart_items = [
+        {**details, 'id': item_id}
+        for item_id, details in CART.items()
+    ]
+    cart_total = sum(item['quantity'] * item['price'] for item in cart_items)
+    return render(request, 'inventory/cart.html', {'cart_items': cart_items, 'cart_total': cart_total})
+
+def update_cart(request, item_id):
+    if item_id in CART:
+        action = request.POST.get('action')
+        if action == 'increment':
+            CART[item_id]['quantity'] += 1
+        elif action == 'decrement' and CART[item_id]['quantity'] > 1:
+            CART[item_id]['quantity'] -= 1
+    return redirect('cart')
+
+def remove_from_cart(request, item_id):
+    if item_id in CART:
+        del CART[item_id]
+    return redirect('cart')
+
+def clear_cart(request):
+    CART.clear()
+    return redirect('cart')
+
+def checkout(request):
+    # Implement payment logic here
+    CART.clear()
+    messages.success(request, "Payment successful!")
+    return redirect('dashboard')
+
+import qrcode
+from django.shortcuts import render
+from io import BytesIO
+import base64
+from django.utils.timezone import now
+import uuid
+
+def payment(request):
+    cart_total = request.GET.get("cart_total", "0")  # Get cart_total from query parameter
+    try:
+        cart_total = float(cart_total)  # Ensure it is a number
+    except ValueError:
+        cart_total = 0
+
+    # Generate UPI QR Code
+    upi_id = "your-upi-id@bank"
+    upi_data = f"upi://pay?pa={upi_id}&pn=YourName&am={cart_total}&cu=INR"
+
+    qr = qrcode.make(upi_data)
+    buffer = BytesIO()
+    qr.save(buffer, format="PNG")
+    buffer.seek(0)
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode()  # Convert to base64
+
+    return render(request, "inventory/payment.html", {
+        "cart_total": cart_total,
+        "upi_id": upi_id,
+        "qr_image": qr_base64,  # Pass the base64-encoded QR image
+    })
+
+def confirm_payment(request):
+    if request.method == "POST":
+        # Extract data from form
+        cart_total = request.POST.get("cart_total", "0")
+        user = request.user
+        transaction_id = str(uuid.uuid4())  # Generate unique transaction ID
+
+        # Save to database
+        Order.objects.create(
+            transaction_id=transaction_id,
+            payment=cart_total,
+            products="Sample Product List",  # Replace with actual product details
+            username=user.username,
+            date=now()
+        )
+
+        # Redirect to order confirmation page
+        return render(request, "inventory/order_confirm.html", {
+            "transaction_id": transaction_id,
+            "payment": cart_total,
+            "username": user.username,
+            "date": now().strftime("%Y-%m-%d %H:%M:%S")
+        })
+    else:
+        return redirect("cart")
+
+
 
 @login_required
 @csrf_exempt

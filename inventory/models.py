@@ -22,4 +22,12 @@ class Category(models.Model):
     def total_price(self):
         return self.item.price * self.quantity
 
+class Order(models.Model):
+    transaction_id = models.CharField(max_length=100, unique=True)
+    payment = models.DecimalField(max_digits=10, decimal_places=2)
+    products = models.TextField()  # Store product details as text or JSON
+    username = models.CharField(max_length=150)
+    date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Order {self.transaction_id} - {self.username}"

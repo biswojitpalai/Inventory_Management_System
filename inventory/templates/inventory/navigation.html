@@ -1,9 +1,10 @@
 <style>
   .cursive {
     font-family: 'Brush Script MT', cursive, sans-serif;
-    font-size: 2.5rem
+    font-size: 2.5rem;
   }
 </style>
+
 <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand cursive" href="{% url 'index' %}">Inventory Manager</a>
@@ -13,6 +14,15 @@
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
+        <!-- Cart Icon -->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-light px-3 me-3" href="{% url 'cart' %}">
+            <i class="bi bi-cart"></i> Cart
+          </a>
+        </li>
+        {% endif %}
+
         <!-- User Options -->
         {% if user.is_authenticated %}
         <!-- Dropdown for Authenticated User -->
@@ -53,6 +63,7 @@
   </div>
 </nav>
 
-
+<!-- Include Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <!-- Include Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

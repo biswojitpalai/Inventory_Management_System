@@ -14,4 +14,12 @@ urlpatterns = [
     path('login/',auth_views.LoginView.as_view(template_name='inventory/login.html'),name='login'),
     path('logout/',auth_views.LogoutView.as_view(template_name='inventory/logout.html', http_method_names = ['get', 'post', 'options']),name='logout'),
     path('clear-all-entries/', clear_all_entries, name='clear-all-entries'),
+    path('add-to-cart/<int:item_id>/', add_to_cart, name='add-to-cart'),
+    path('cart/', view_cart, name='cart'),
+    path('update-cart/<int:item_id>/', update_cart, name='update-cart'),
+    path('remove-from-cart/<int:item_id>/', remove_from_cart, name='remove-from-cart'),
+    path('clear-cart/', clear_cart, name='clear-cart'),
+    path('checkout/', checkout, name='checkout'),
+    path("payment/", payment, name="payment"),
+    path("confirm_payment/", confirm_payment, name="confirm_payment"),
 ]
