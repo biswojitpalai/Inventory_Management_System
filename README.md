@@ -2,7 +2,12 @@
 
 A full-featured **Inventory Management System** built with **Django, Bootstrap, and JavaScript**. This system allows users to **add, edit, delete, and manage inventory items**, **track quantities**, **search items**, **export data**, and **process payments** with UPI integration.
 
+![Alt text](https://github.com/biswojitpalai/Inventory_Management_System/blob/main/images/homepage.png)
+![Alt text](https://github.com/biswojitpalai/Inventory_Management_System/blob/main/images/product%20page.png)
+![Alt text](https://github.com/biswojitpalai/Inventory_Management_System/blob/main/images/editproduct%20page.png)
 ![Alt text](https://github.com/biswojitpalai/Inventory_Management_System/blob/main/images/cart%20page.png)
+![Alt text](https://github.com/biswojitpalai/Inventory_Management_System/blob/main/images/payment%20page.png)
+![Alt text](https://github.com/biswojitpalai/Inventory_Management_System/blob/main/images/payment%20detail.png)
 
 ---
 
