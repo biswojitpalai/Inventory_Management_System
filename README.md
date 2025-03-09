@@ -74,18 +74,18 @@ python manage.py runserver
 
 ## 🔑 **User Guide**
 ### 🌟 Adding Items
-  1.Log in to your account.
-  2.Click "Add Item".
-  3.Fill in the item name, category, quantity, and price.
-  4.Click "Add Item" to save.
+- Log in to your account.
+- Click "Add Item".
+- Fill in the item name, category, quantity, and price.
+- Click "Add Item" to save.
 ### 🛒 Managing Cart
-  1.Click "Add to Cart" on an item in the inventory.
-  2.Modify quantity using + / - buttons.
-  3.Click "Proceed to Payment".
+- Click "Add to Cart" on an item in the inventory.
+- Modify quantity using + / - buttons.
+- Click "Proceed to Payment".
 ### 💳 Making a Payment
-  1.A UPI QR Code will be displayed for the total cart amount.
-  2.Scan using any UPI app to complete payment.
-  3.Click "OK" to confirm and save the transaction.
+- A UPI QR Code will be displayed for the total cart amount.
+- Scan using any UPI app to complete payment.
+- Click "OK" to confirm and save the transaction.
 ### 📦 Exporting Inventory
 --> Click "Export CSV" to download inventory details.
 
