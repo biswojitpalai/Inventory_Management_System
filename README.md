@@ -2,7 +2,7 @@
 
 A full-featured **Inventory Management System** built with **Django, Bootstrap, and JavaScript**. This system allows users to **add, edit, delete, and manage inventory items**, **track quantities**, **search items**, **export data**, and **process payments** with UPI integration.
 
-! images/cart page.png
+![Alt text](images/cart page.png)
 
 ---
 
