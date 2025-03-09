@@ -53,5 +53,8 @@ A full-featured **Inventory Management System** built with **Django, Bootstrap, 
 ## 🚀 **Installation & Setup**
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-username/inventory-management.git
+git clone https://github.com/biswojitpalai/inventory-management.git
 cd inventory-management
+
+## 🚀 **Installation & Setup**
+### 1️⃣ Clone the Repository
